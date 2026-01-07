@@ -7,11 +7,11 @@
     <style>
         :root {
             --bg: #121212; --card: #1e1e1e; --text: #e0e0e0; --primary: #3f51b5;
-            --accent: #ff9800; --secondary: #424242; --input-bg: #2d2d2d;
+            --accent: #ff9800; --secondary: #424242; --input-bg: #2d2d2d; --danger: #f44336;
         }
         .light-mode {
             --bg: #f4f4f9; --card: #ffffff; --text: #333333; --primary: #007bff;
-            --accent: #f57c00; --secondary: #e0e0e0; --input-bg: #ffffff;
+            --accent: #f57c00; --secondary: #e0e0e0; --input-bg: #ffffff; --danger: #d32f2f;
         }
         body {
             font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
@@ -26,13 +26,10 @@
         }
         .hidden { display: none !important; }
         #theme-toggle { position: absolute; top: 15px; right: 15px; cursor: pointer; font-size: 1.5rem; user-select: none; padding: 5px; }
-        
         #arabic-display { font-size: 3.5rem; margin-bottom: 0.5rem; min-height: 1.2em; word-wrap: break-word; }
-        
         .time-row { display: flex; gap: 8px; margin: 15px 0 20px 0; justify-content: center; }
         .time-btn { flex: 1; padding: 12px 5px; font-size: 0.9rem; background: var(--secondary); color: var(--text); border-radius: 8px; border: none; font-weight: bold; }
         .time-btn.active { background: #555; color: #888; opacity: 0.6; }
-
         .controls { background: var(--input-bg); padding: 18px; border-radius: 12px; margin-bottom: 1.5rem; }
         input[type=range] { width: 100%; height: 35px; cursor: pointer; }
         input[type=text] { 
@@ -41,18 +38,18 @@
             appearance: none; -webkit-appearance: none;
         }
         .btn-group { display: flex; gap: 10px; justify-content: center; }
-        button { padding: 15px 20px; font-size: 1rem; font-weight: 700; cursor: pointer; border: none; border-radius: 10px; }
+        button { padding: 15px 20px; font-size: 1rem; font-weight: 700; cursor: pointer; border: none; border-radius: 10px; transition: 0.2s; }
         .primary-btn { background-color: var(--primary); color: white; flex: 2; }
+        .primary-btn:disabled { background-color: #333 !important; color: #666 !important; cursor: not-allowed; }
         .secondary-btn { background-color: var(--secondary); color: var(--text); flex: 1; }
         .menu-btn { background-color: var(--primary); color: white; width: 100%; margin-bottom: 12px; font-size: 1.1rem; padding: 18px; }
-        
         #timer-bar-container { width: 100%; height: 8px; background: #333; margin-bottom: 1rem; border-radius: 4px; overflow: hidden; }
-        #timer-bar { width: 100%; height: 100%; background: var(--accent); transition: width 0.1s linear; }
-        
+        #timer-bar { width: 100%; height: 100%; background: var(--accent); transition: width 0.1s linear, background-color 0.3s; }
         #feedback { font-weight: bold; margin-bottom: 1rem; height: 1.2em; font-size: 1.1rem; }
         .correct { color: #4caf50; }
         .incorrect { color: #f44336; }
         .score-footer { font-size: 0.85rem; color: #888; margin-top: 15px; border-top: 1px solid #444; padding-top: 10px; }
+        .highlight-menu { border: 2px solid var(--primary) !important; box-shadow: 0 0 10px var(--primary); }
     </style>
 </head>
 <body>
@@ -90,7 +87,7 @@
         </div>
         <div id="western-display" class="hidden"></div>
         <div class="btn-group">
-            <button class="secondary-btn" onclick="showMenu()">Menu</button>
+            <button id="menu-btn-app" class="secondary-btn" onclick="showMenu()">Menu</button>
             <button id="back-btn" class="secondary-btn" onclick="goBack()">Back</button>
             <button id="main-action-btn" class="primary-btn" onclick="handleAction()">Action</button>
         </div>
@@ -134,6 +131,8 @@
         clearInterval(timerInterval);
         document.getElementById('main-menu').classList.remove('hidden');
         document.getElementById('app-view').classList.add('hidden');
+        document.getElementById('main-action-btn').disabled = false;
+        document.getElementById('menu-btn-app').classList.remove('highlight-menu');
         currentMode = '';
     }
 
@@ -141,6 +140,9 @@
         currentMode = mode; history = []; streak = 0;
         document.getElementById('main-menu').classList.add('hidden');
         document.getElementById('app-view').classList.remove('hidden');
+        document.getElementById('main-action-btn').disabled = false;
+        document.getElementById('menu-btn-app').classList.remove('highlight-menu');
+        
         const isQuiz = mode === 'quiz';
         document.getElementById('practice-controls').classList.toggle('hidden', isQuiz);
         document.getElementById('quiz-ui').classList.toggle('hidden', !isQuiz);
@@ -164,9 +166,13 @@
         timeLeft = selectedTime;
         const bar = document.getElementById('timer-bar');
         bar.style.width = '100%';
+        bar.style.backgroundColor = 'var(--accent)';
+        
         timerInterval = setInterval(() => {
             timeLeft -= 0.1;
-            bar.style.width = (timeLeft / selectedTime * 100) + '%';
+            const percentage = (timeLeft / selectedTime * 100);
+            bar.style.width = percentage + '%';
+            if (percentage <= 20) bar.style.backgroundColor = 'var(--danger)';
             if (timeLeft <= 0) { clearInterval(timerInterval); handleAction(); }
         }, 100);
     }
@@ -178,7 +184,6 @@
             numStr += (i === 0 && currentLen > 1) ? (Math.floor(Math.random()*9)+1).toString() : Math.floor(Math.random()*10).toString();
         }
         history.push(numStr);
-        if (history.length > 11) history.shift();
         display(numStr);
         if(currentMode === 'quiz') startTimer();
     }
@@ -188,17 +193,21 @@
         document.getElementById('western-display').innerText = str;
         document.getElementById('western-display').style.visibility = 'hidden';
         document.getElementById('feedback').innerText = '';
-        document.getElementById('quiz-input').value = '';
-        document.getElementById('quiz-input').disabled = false;
+        const inputField = document.getElementById('quiz-input');
+        inputField.value = '';
+        inputField.disabled = false;
         document.getElementById('main-action-btn').innerText = currentMode === 'quiz' ? 'Check' : 'Continue';
         isRevealed = false;
+        
         if(currentMode === 'quiz') {
-            setTimeout(() => document.getElementById('quiz-input').focus(), 50);
+            setTimeout(() => { inputField.focus(); inputField.click(); }, 50);
         }
     }
 
     function handleAction() {
+        if (document.getElementById('main-action-btn').disabled) return;
         const currentNum = history[history.length - 1];
+
         if (currentMode === 'generator') {
             if (!isRevealed) {
                 document.getElementById('western-display').style.visibility = 'visible';
@@ -207,22 +216,32 @@
             } else { generate(); }
         } else {
             if (!isRevealed) {
-                clearInterval(timerInterval); isRevealed = true;
-                const input = document.getElementById('quiz-input').value.trim();
-                document.getElementById('quiz-input').disabled = true;
-                if (input === currentNum && timeLeft > 0) {
+                clearInterval(timerInterval);
+                isRevealed = true;
+                const inputField = document.getElementById('quiz-input');
+                const inputVal = inputField.value.trim();
+                inputField.disabled = true;
+
+                if (inputVal === currentNum) {
                     document.getElementById('feedback').innerText = "Correct!"; 
                     document.getElementById('feedback').className = "correct";
                     streak++;
                     const key = `best_len${currentLen}_time${selectedTime}`;
                     if (streak > (localStorage.getItem(key) || 0)) localStorage.setItem(key, streak);
+                    document.getElementById('main-action-btn').innerText = 'Continue';
                 } else {
                     document.getElementById('feedback').innerText = timeLeft <= 0 ? `Time's Up! (${currentNum})` : `Wrong! (${currentNum})`;
-                    document.getElementById('feedback').className = "incorrect"; streak = 0;
+                    document.getElementById('feedback').className = "incorrect";
+                    streak = 0;
+                    // LOCK Continue and highlight Menu
+                    document.getElementById('main-action-btn').innerText = 'Game Over';
+                    document.getElementById('main-action-btn').disabled = true;
+                    document.getElementById('menu-btn-app').classList.add('highlight-menu');
                 }
                 updateStats();
-                document.getElementById('main-action-btn').innerText = 'Continue';
-            } else { generate(); }
+            } else { 
+                generate(); 
+            }
         }
     }
 

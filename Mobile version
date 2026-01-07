@@ -27,19 +27,12 @@
         }
         .hidden { display: none !important; }
         #theme-toggle { position: absolute; top: 20px; right: 20px; cursor: pointer; font-size: 1.4rem; z-index: 10; }
-        
         h1 { font-size: 1.6rem; margin-top: 0; }
-        
-        /* Display Area */
         #arabic-display { font-size: 4rem; font-weight: 700; margin: 1rem 0; color: var(--text); letter-spacing: 2px; }
         #western-display { font-size: 1.5rem; color: var(--accent); font-weight: 600; margin-bottom: 1rem; }
-
-        /* Controls */
         .controls { background: var(--input-bg); padding: 20px; border-radius: 18px; margin-bottom: 1rem; }
         .label-text { font-size: 0.9rem; font-weight: 600; opacity: 0.8; margin-bottom: 8px; display: block; }
-        
         input[type=range] { width: 100%; height: 40px; accent-color: var(--primary); }
-        
         input[type=text] { 
             background: var(--input-bg); border: 2px solid transparent; color: var(--text); 
             padding: 16px; border-radius: 14px; font-size: 1.4rem; text-align: center; width: 90%;
@@ -47,36 +40,27 @@
             box-shadow: inset 0 2px 4px rgba(0,0,0,0.2);
         }
         input[type=text]:focus { border-color: var(--primary); }
-
         .shake { animation: shake 0.4s cubic-bezier(.36,.07,.19,.97) both; border-color: var(--danger) !important; }
         @keyframes shake {
             10%, 90% { transform: translate3d(-1px, 0, 0); }
             30%, 50%, 70% { transform: translate3d(-4px, 0, 0); }
             40%, 60% { transform: translate3d(4px, 0, 0); }
         }
-
-        /* Buttons */
         .time-row { display: flex; gap: 8px; margin: 1rem 0; }
         .time-btn { flex: 1; padding: 12px 0; font-size: 0.85rem; background: var(--secondary); color: var(--text); border-radius: 10px; border: none; font-weight: bold; }
         .time-btn.active { background: var(--primary); color: white; box-shadow: 0 4px 12px rgba(92, 107, 192, 0.4); }
-
         .btn-group { display: flex; gap: 12px; width: 100%; }
         button { font-family: inherit; font-size: 1rem; font-weight: 700; cursor: pointer; border: none; border-radius: 14px; transition: active 0.1s; }
         button:active { transform: scale(0.96); opacity: 0.9; }
-        
         .primary-btn { background-color: var(--primary); color: white; flex: 2; padding: 18px; }
         .primary-btn:disabled { background-color: #333 !important; color: #666 !important; cursor: not-allowed; transform: none; }
         .secondary-btn { background-color: var(--secondary); color: var(--text); flex: 1; padding: 18px; }
         .menu-btn { background-color: var(--primary); color: white; width: 100%; padding: 20px; font-size: 1.1rem; margin-bottom: 10px; }
-
-        /* Timer Bar */
         #timer-bar-container { width: 100%; height: 6px; background: rgba(255,255,255,0.1); border-radius: 10px; overflow: hidden; margin-bottom: 1.5rem; }
         #timer-bar { width: 100%; height: 100%; background: var(--accent); transition: width 0.1s linear; }
-        
         #feedback { font-weight: bold; height: 1.2em; font-size: 1.1rem; margin-bottom: 0.5rem; }
         .correct { color: #4caf50; }
         .incorrect { color: var(--danger); }
-        
         .score-footer { font-size: 0.8rem; opacity: 0.6; padding-top: 15px; border-top: 1px solid rgba(255,255,255,0.1); }
         .highlight-menu { border: 2px solid var(--primary) !important; box-shadow: 0 0 15px rgba(92, 107, 192, 0.5); }
     </style>
@@ -93,7 +77,6 @@
                 <span class="label-text" id="menu-length-label">Digit Length: 4</span>
                 <input type="range" id="menu-slider" min="1" max="16" value="4" oninput="syncLabels(this.value)" onchange="syncSliders(this.value)">
             </div>
-            
             <span class="label-text">Select Time Limit</span>
             <div class="time-row">
                 <button class="time-btn" onclick="setTimeLimit(1)">1s</button>
@@ -102,30 +85,25 @@
                 <button class="time-btn" onclick="setTimeLimit(20)">20s</button>
             </div>
         </div>
-
         <div id="app-view" class="hidden">
             <div id="practice-controls" class="controls">
                 <span class="label-text" id="app-length-label">Digit Length: 4</span>
                 <input type="range" id="app-slider" min="1" max="16" value="4" oninput="syncLabels(this.value)" onchange="syncSliders(this.value)">
             </div>
-            
             <div id="timer-bar-container" class="hidden"><div id="timer-bar"></div></div>
             <div id="arabic-display"></div>
             <div id="western-display" class="hidden"></div>
-            
             <div id="quiz-ui" class="hidden">
                 <div id="feedback"></div>
                 <input type="text" id="quiz-input" placeholder="Enter numbers..." autocomplete="off" inputmode="numeric">
             </div>
         </div>
     </div>
-
     <div id="content-bottom">
         <div id="menu-actions">
             <button class="menu-btn" onclick="startMode('generator')">Free Practice</button>
             <button id="quiz-start-btn" class="menu-btn" onclick="startMode('quiz')">Quiz Mode (10s)</button>
         </div>
-
         <div id="app-actions" class="hidden">
             <div class="btn-group">
                 <button id="menu-btn-app" class="secondary-btn" onclick="showMenu()">Menu</button>
@@ -143,7 +121,6 @@
     const arabicDigits = ['٠', '١', '٢', '٣', '٤', '٥', '٦', '٧', '٨', '٩'];
     let history = [], currentMode = '', isRevealed = false, streak = 0, currentLen = 4, selectedTime = 10;
     let timerInterval, timeLeft = 10;
-
     const inputField = document.getElementById('quiz-input');
 
     function toggleTheme() {
@@ -191,9 +168,7 @@
         document.getElementById('app-actions').classList.remove('hidden');
         document.getElementById('main-action-btn').disabled = false;
         document.getElementById('menu-btn-app').classList.remove('highlight-menu');
-        
         inputField.maxLength = currentLen;
-
         const isQuiz = mode === 'quiz';
         document.getElementById('practice-controls').classList.toggle('hidden', isQuiz);
         document.getElementById('quiz-ui').classList.toggle('hidden', !isQuiz);
@@ -230,7 +205,6 @@
         timeLeft = selectedTime;
         const bar = document.getElementById('timer-bar');
         bar.style.width = '100%';
-        
         timerInterval = setInterval(() => {
             timeLeft -= 0.1;
             const percentage = (timeLeft / selectedTime * 100);
@@ -246,7 +220,15 @@
         clearInterval(timerInterval);
         let numStr = "";
         for(let i=0; i<currentLen; i++) {
-            numStr += (i === 0 && currentLen > 1) ? (Math.floor(Math.random()*9)+1).toString() : Math.floor(Math.random()*10).toString();
+            let nextDigit;
+            do {
+                if (i === 0 && currentLen > 1) {
+                    nextDigit = Math.floor(Math.random() * 9) + 1;
+                } else {
+                    nextDigit = Math.floor(Math.random() * 10);
+                }
+            } while (i > 0 && nextDigit.toString() === numStr[i-1]);
+            numStr += nextDigit.toString();
         }
         history.push(numStr);
         display(numStr);
@@ -270,7 +252,6 @@
     function handleAction(isForced = false) {
         if (document.getElementById('main-action-btn').disabled) return;
         const currentNum = history[history.length - 1];
-
         if (currentMode === 'generator') {
             if (!isRevealed) {
                 document.getElementById('western-display').style.visibility = 'visible';
@@ -287,7 +268,6 @@
                 clearInterval(timerInterval);
                 isRevealed = true;
                 inputField.disabled = true;
-
                 if (inputVal === currentNum) {
                     document.getElementById('feedback').innerText = "Correct!"; 
                     document.getElementById('feedback').className = "correct";
@@ -298,7 +278,7 @@
                 } else {
                     document.getElementById('feedback').innerText = timeLeft <= 0 ? `Time's Up!` : `Wrong Answer!`;
                     document.getElementById('feedback').className = "incorrect";
-                    document.getElementById('arabic-display').innerText = currentNum; // Show correct western answer
+                    document.getElementById('arabic-display').innerText = currentNum;
                     streak = 0;
                     document.getElementById('main-action-btn').innerText = 'Locked';
                     document.getElementById('main-action-btn').disabled = true;

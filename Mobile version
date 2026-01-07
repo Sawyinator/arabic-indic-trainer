@@ -1,0 +1,262 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0">
+    <title>Arabic-Indic Trainer</title>
+    <style>
+        :root {
+            --bg: #121212; --card: #1e1e1e; --text: #e0e0e0; --primary: #3f51b5;
+            --accent: #ff9800; --secondary: #424242; --input-bg: #2d2d2d; --danger: #b00020;
+        }
+        .light-mode {
+            --bg: #f4f4f9; --card: #ffffff; --text: #333333; --primary: #007bff;
+            --accent: #f57c00; --secondary: #e0e0e0; --input-bg: #ffffff; --danger: #d32f2f;
+        }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+            display: flex; align-items: center; justify-content: center;
+            height: 100vh; margin: 0; background-color: var(--bg); color: var(--text);
+            transition: background 0.3s; overflow: hidden;
+        }
+        .container {
+            text-align: center; background: var(--card); padding: 2rem;
+            border-radius: 16px; box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+            width: 90%; max-width: 450px; position: relative;
+        }
+        .hidden { display: none !important; }
+        #theme-toggle { position: absolute; top: 15px; right: 15px; cursor: pointer; font-size: 1.5rem; user-select: none; padding: 5px; }
+        
+        #arabic-display { font-size: 3.5rem; margin-bottom: 0.5rem; min-height: 1.2em; word-wrap: break-word; }
+        
+        .time-row { display: flex; gap: 8px; margin: 15px 0 20px 0; justify-content: center; }
+        .time-btn { flex: 1; padding: 12px 5px; font-size: 0.9rem; background: var(--secondary); color: var(--text); border-radius: 8px; border: none; font-weight: bold; }
+        .time-btn.active { background: #555; color: #888; opacity: 0.6; }
+
+        .controls { background: var(--input-bg); padding: 18px; border-radius: 12px; margin-bottom: 1.5rem; }
+        input[type=range] { width: 100%; height: 35px; cursor: pointer; }
+        input[type=text] { 
+            background: var(--input-bg); border: 2px solid #444; color: var(--text); 
+            padding: 14px; border-radius: 10px; font-size: 1.2rem; text-align: center; width: 85%; margin-bottom: 1rem;
+            appearance: none; -webkit-appearance: none;
+        }
+        .btn-group { display: flex; gap: 10px; justify-content: center; }
+        button { padding: 15px 20px; font-size: 1rem; font-weight: 700; cursor: pointer; border: none; border-radius: 10px; }
+        .primary-btn { background-color: var(--primary); color: white; flex: 2; }
+        .secondary-btn { background-color: var(--secondary); color: var(--text); flex: 1; }
+        .menu-btn { background-color: var(--primary); color: white; width: 100%; margin-bottom: 12px; font-size: 1.1rem; padding: 18px; }
+        
+        #timer-bar-container { width: 100%; height: 8px; background: #333; margin-bottom: 1rem; border-radius: 4px; overflow: hidden; }
+        #timer-bar { width: 100%; height: 100%; background: var(--accent); transition: width 0.1s linear; }
+        
+        .score-table { width: 100%; border-collapse: collapse; font-size: 0.85rem; margin-top: 10px; }
+        .score-table th, .score-table td { padding: 10px 4px; border-bottom: 1px solid #444; text-align: center; }
+        .scroll-area { max-height: 300px; overflow-y: auto; background: rgba(0,0,0,0.1); border-radius: 10px; }
+
+        #feedback { font-weight: bold; margin-bottom: 1rem; height: 1.2em; font-size: 1.1rem; }
+        .correct { color: #4caf50; }
+        .incorrect { color: #f44336; }
+    </style>
+</head>
+<body>
+
+<div id="theme-toggle" onclick="toggleTheme()">🌙</div>
+
+<div class="container">
+    <div id="main-menu">
+        <h1>Arabic Trainer</h1>
+        <div class="controls">
+            <label id="menu-length-label">Digit Length: 4</label><br>
+            <input type="range" id="menu-slider" min="1" max="16" value="4" oninput="syncLabels(this.value)" onchange="syncSliders(this.value)">
+        </div>
+        <button class="menu-btn" onclick="startMode('generator')">Free Practice</button>
+        <button id="quiz-start-btn" class="menu-btn" onclick="startMode('quiz')">Quiz Mode (10s)</button>
+        
+        <div class="time-row">
+            <button class="time-btn" onclick="setTimeLimit(1)">1s</button>
+            <button class="time-btn" onclick="setTimeLimit(5)">5s</button>
+            <button class="time-btn active" id="btn-10s" onclick="setTimeLimit(10)">10s</button>
+            <button class="time-btn" onclick="setTimeLimit(20)">20s</button>
+        </div>
+
+        <button class="menu-btn" style="background:#444" onclick="showLeaderboard()">View Best Scores</button>
+    </div>
+
+    <div id="leaderboard-view" class="hidden">
+        <h2>Top Scores</h2>
+        <div class="scroll-area">
+            <table class="score-table">
+                <thead><tr><th>Len</th><th>1s</th><th>5s</th><th>10s</th><th>20s</th></tr></thead>
+                <tbody id="score-body"></tbody>
+            </table>
+        </div>
+        <button class="menu-btn" style="margin-top:20px;" onclick="showMenu()">Back</button>
+        <button style="background:var(--danger); color:white; width:100%; padding:12px; border-radius:10px; font-weight:bold;" onclick="clearAllScores()">Reset All Data</button>
+    </div>
+
+    <div id="app-view" class="hidden">
+        <div id="practice-controls" class="controls">
+            <label id="app-length-label">Digit Length: 4</label><br>
+            <input type="range" id="app-slider" min="1" max="16" value="4" oninput="syncLabels(this.value)" onchange="syncSliders(this.value)">
+        </div>
+        <div id="timer-bar-container" class="hidden"><div id="timer-bar"></div></div>
+        <div id="arabic-display"></div>
+        <div id="quiz-ui" class="hidden">
+            <div id="feedback"></div>
+            <input type="text" id="quiz-input" placeholder="Enter numbers..." autocomplete="off" inputmode="numeric">
+        </div>
+        <div id="western-display" class="hidden"></div>
+        <div class="btn-group">
+            <button class="secondary-btn" onclick="showMenu()">Menu</button>
+            <button id="back-btn" class="secondary-btn" onclick="goBack()">Back</button>
+            <button id="main-action-btn" class="primary-btn" onclick="handleAction()">Action</button>
+        </div>
+    </div>
+</div>
+
+<script>
+    const arabicDigits = ['٠', '١', '٢', '٣', '٤', '٥', '٦', '٧', '٨', '٩'];
+    let history = [], currentMode = '', isRevealed = false, streak = 0, currentLen = 4, selectedTime = 10;
+    let timerInterval, timeLeft = 10;
+
+    function toggleTheme() {
+        document.body.classList.toggle('light-mode');
+        document.getElementById('theme-toggle').innerText = document.body.classList.contains('light-mode') ? '☀️' : '🌙';
+    }
+
+    function syncLabels(val) {
+        document.getElementById('menu-length-label').innerText = `Digit Length: ${val}`;
+        document.getElementById('app-length-label').innerText = `Digit Length: ${val}`;
+    }
+
+    function syncSliders(val) {
+        currentLen = parseInt(val);
+        document.getElementById('menu-slider').value = val;
+        document.getElementById('app-slider').value = val;
+        if(currentMode === 'generator') generate();
+    }
+
+    function setTimeLimit(seconds) {
+        selectedTime = seconds;
+        document.querySelectorAll('.time-btn').forEach(btn => {
+            btn.classList.toggle('active', parseInt(btn.innerText) === seconds);
+        });
+        document.getElementById('quiz-start-btn').innerText = `Quiz Mode (${seconds}s)`;
+    }
+
+    function showMenu() {
+        clearInterval(timerInterval);
+        document.getElementById('main-menu').classList.remove('hidden');
+        document.getElementById('app-view').classList.add('hidden');
+        document.getElementById('leaderboard-view').classList.add('hidden');
+        currentMode = '';
+    }
+
+    function showLeaderboard() {
+        document.getElementById('main-menu').classList.add('hidden');
+        document.getElementById('leaderboard-view').classList.remove('hidden');
+        const tbody = document.getElementById('score-body');
+        tbody.innerHTML = '';
+        const times = [1, 5, 10, 20];
+        for(let i=1; i<=16; i++) {
+            let row = `<tr><td>${i}</td>`;
+            times.forEach(t => {
+                const score = localStorage.getItem(`best_len${i}_time${t}`) || 0;
+                row += `<td>${score}</td>`;
+            });
+            row += `</tr>`;
+            tbody.innerHTML += row;
+        }
+    }
+
+    function clearAllScores() {
+        if(confirm("Wipe all leaderboard data?")) {
+            localStorage.clear();
+            showLeaderboard();
+        }
+    }
+
+    function startMode(mode) {
+        currentMode = mode; history = []; streak = 0;
+        document.getElementById('main-menu').classList.add('hidden');
+        document.getElementById('app-view').classList.remove('hidden');
+        const isQuiz = mode === 'quiz';
+        document.getElementById('practice-controls').classList.toggle('hidden', isQuiz);
+        document.getElementById('quiz-ui').classList.toggle('hidden', !isQuiz);
+        document.getElementById('timer-bar-container').classList.toggle('hidden', !isQuiz);
+        document.getElementById('western-display').classList.toggle('hidden', isQuiz);
+        document.getElementById('back-btn').classList.toggle('hidden', isQuiz);
+        generate();
+    }
+
+    function startTimer() {
+        clearInterval(timerInterval);
+        timeLeft = selectedTime;
+        const bar = document.getElementById('timer-bar');
+        bar.style.width = '100%';
+        timerInterval = setInterval(() => {
+            timeLeft -= 0.1;
+            bar.style.width = (timeLeft / selectedTime * 100) + '%';
+            if (timeLeft <= 0) { clearInterval(timerInterval); handleAction(); }
+        }, 100);
+    }
+
+    function generate() {
+        clearInterval(timerInterval);
+        let numStr = "";
+        for(let i=0; i<currentLen; i++) {
+            numStr += (i === 0 && currentLen > 1) ? (Math.floor(Math.random()*9)+1).toString() : Math.floor(Math.random()*10).toString();
+        }
+        history.push(numStr);
+        if (history.length > 11) history.shift();
+        display(numStr);
+        if(currentMode === 'quiz') startTimer();
+    }
+
+    function display(str) {
+        document.getElementById('arabic-display').innerText = str.split('').map(d => arabicDigits[parseInt(d)]).join('');
+        document.getElementById('western-display').innerText = str;
+        document.getElementById('western-display').style.visibility = 'hidden';
+        document.getElementById('feedback').innerText = '';
+        document.getElementById('quiz-input').value = '';
+        document.getElementById('quiz-input').disabled = false;
+        document.getElementById('main-action-btn').innerText = currentMode === 'quiz' ? 'Check' : 'Continue';
+        isRevealed = false;
+        if(currentMode === 'quiz') {
+            setTimeout(() => document.getElementById('quiz-input').focus(), 50);
+        }
+    }
+
+    function handleAction() {
+        const currentNum = history[history.length - 1];
+        if (currentMode === 'generator') {
+            if (!isRevealed) {
+                document.getElementById('western-display').style.visibility = 'visible';
+                document.getElementById('main-action-btn').innerText = 'Continue';
+                isRevealed = true;
+            } else { generate(); }
+        } else {
+            if (!isRevealed) {
+                clearInterval(timerInterval); isRevealed = true;
+                const input = document.getElementById('quiz-input').value.trim();
+                document.getElementById('quiz-input').disabled = true;
+                if (input === currentNum && timeLeft > 0) {
+                    document.getElementById('feedback').innerText = "Correct!"; 
+                    document.getElementById('feedback').className = "correct";
+                    streak++;
+                    const key = `best_len${currentLen}_time${selectedTime}`;
+                    if (streak > (localStorage.getItem(key) || 0)) localStorage.setItem(key, streak);
+                } else {
+                    document.getElementById('feedback').innerText = timeLeft <= 0 ? `Time's Up! (${currentNum})` : `Wrong! (${currentNum})`;
+                    document.getElementById('feedback').className = "incorrect"; streak = 0;
+                }
+                document.getElementById('main-action-btn').innerText = 'Continue';
+            } else { generate(); }
+        }
+    }
+
+    function goBack() { if (history.length > 1 && currentMode === 'generator') { history.pop(); display(history[history.length-1]); } }
+    document.addEventListener('keypress', (e) => { if (e.key === 'Enter') handleAction(); });
+</script>
+</body>
+</html>

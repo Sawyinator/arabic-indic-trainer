@@ -20,17 +20,31 @@
             transition: background 0.3s; overflow: hidden; touch-action: manipulation;
         }
         .container {
-            background: var(--card); padding: 1.2rem;
-            border-radius: 0 0 20px 20px; box-shadow: 0 10px 30px rgba(0,0,0,0.3);
-            width: 92%; max-width: 400px; position: relative; align-self: flex-start;
+            background: var(--card); padding: 1.2rem 0.8rem;
+            /* Updated to 80px as requested */
+            margin-top: 80px; 
+            border-radius: 20px; box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+            width: 94%; max-width: 400px; position: relative;
+            box-sizing: border-box;
+            align-self: flex-start; 
         }
         .hidden { display: none !important; }
         
-        .header-row { display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; }
+        .header-row { display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; padding: 0 0.4rem; }
         h1 { font-size: 1.4rem; margin: 0; }
         #theme-toggle { cursor: pointer; font-size: 1.4rem; user-select: none; }
         
-        #arabic-display { font-size: 4.5rem; margin-bottom: 0.5rem; min-height: 1.2em; text-align: center; font-weight: 500; }
+        #arabic-display { 
+            font-size: 4.5rem; 
+            margin-bottom: 0.5rem; 
+            min-height: 1.2em; 
+            text-align: center; 
+            font-weight: 500;
+            white-space: nowrap;
+            overflow: hidden;
+            width: 100%;
+            transition: font-size 0.1s ease-out;
+        }
         
         .time-row { display: flex; gap: 6px; margin: 10px 0; justify-content: center; }
         .time-btn { flex: 1; padding: 12px 5px; font-size: 1rem; background: var(--secondary); color: var(--text); border-radius: 8px; border: none; font-weight: bold; }
@@ -38,10 +52,11 @@
 
         .controls { background: var(--input-bg); padding: 12px; border-radius: 12px; margin-bottom: 1rem; font-size: 1.1rem; }
         input[type=range] { width: 100%; height: 35px; }
+        
         input[type=text] { 
             background: var(--input-bg); border: 2px solid #444; color: var(--text); 
-            padding: 15px; border-radius: 10px; font-size: 1.8rem; text-align: center; width: 85%; margin: 0 auto 1rem auto;
-            display: block; outline: none;
+            padding: 15px; border-radius: 10px; font-size: 1.8rem; text-align: center; width: 100%; margin: 0 auto 1rem auto;
+            display: block; outline: none; box-sizing: border-box;
         }
         
         .shake { animation: shake 0.3s both; border-color: var(--danger) !important; }
@@ -64,8 +79,9 @@
         #feedback { font-weight: bold; margin-bottom: 0.5rem; height: 1.2em; font-size: 1.3rem; text-align: center; }
         #quiz-stats-display { font-size: 1rem; color: #888; margin-bottom: 0.8rem; text-align: center; }
         #western-display { font-size: 1.4rem; color: var(--accent); font-weight: 600; text-align: center; margin-bottom: 1rem; height: 1.2em; }
-        .correct { color: #4caf50; }
-        .incorrect { color: #f44336; }
+        
+        .correct { color: #4caf50; text-shadow: 0 0 10px rgba(76, 175, 80, 0.3); }
+        .incorrect { color: #f44336; text-shadow: 0 0 10px rgba(244, 67, 54, 0.3); }
         .highlight-menu { border: 2px solid var(--primary) !important; }
     </style>
 </head>
@@ -103,7 +119,16 @@
         <div id="quiz-ui" class="hidden">
             <div id="feedback"></div>
             <div id="quiz-stats-display">Current Streak: 0</div>
-            <input type="text" id="quiz-input" placeholder="Type here..." autocomplete="off" inputmode="numeric">
+            
+            <form id="quiz-form" onsubmit="event.preventDefault(); handleAction();">
+                <input type="text" 
+                       id="quiz-input" 
+                       name="quiz-input"
+                       placeholder="Type here..." 
+                       autocomplete="off" 
+                       inputmode="decimal" 
+                       enterkeyhint="done">
+            </form>
         </div>
         <div id="western-display" class="hidden"></div>
         <div class="btn-group">
@@ -120,6 +145,24 @@
     let timerInterval, timeLeft = 10;
 
     const quizInput = document.getElementById('quiz-input');
+    const displayEl = document.getElementById('arabic-display');
+
+    function adjustFontSize() {
+        const length = currentLen;
+        if (length <= 7) {
+            displayEl.style.fontSize = "4.5rem";
+            displayEl.style.letterSpacing = "0";
+        } else if (length <= 10) {
+            displayEl.style.fontSize = "3.8rem";
+            displayEl.style.letterSpacing = "-1px";
+        } else if (length <= 13) {
+            displayEl.style.fontSize = "3rem";
+            displayEl.style.letterSpacing = "-2px";
+        } else {
+            displayEl.style.fontSize = "2.3rem";
+            displayEl.style.letterSpacing = "-2px";
+        }
+    }
 
     function triggerShake() {
         quizInput.classList.remove('shake');
@@ -148,6 +191,7 @@
         document.getElementById('menu-slider').value = val;
         document.getElementById('app-slider').value = val;
         quizInput.maxLength = currentLen;
+        adjustFontSize();
         if(currentMode === 'generator') generate();
     }
 
@@ -183,6 +227,8 @@
         document.getElementById('western-display').classList.toggle('hidden', isQuiz);
         document.getElementById('back-btn').classList.toggle('hidden', isQuiz);
         if(isQuiz) document.getElementById('quiz-stats-display').innerText = `Current Streak: 0`;
+        
+        adjustFontSize();
         generate();
     }
 
@@ -222,7 +268,7 @@
     }
 
     function display(str) {
-        document.getElementById('arabic-display').innerText = str.split('').map(d => arabicDigits[parseInt(d)]).join('');
+        displayEl.innerText = str.split('').map(d => arabicDigits[parseInt(d)]).join('');
         document.getElementById('western-display').innerText = str;
         document.getElementById('western-display').style.visibility = 'hidden';
         document.getElementById('feedback').innerText = '';
@@ -275,7 +321,6 @@
     }
 
     function goBack() { if (history.length > 1 && currentMode === 'generator') { history.pop(); display(history[history.length-1]); } }
-    document.addEventListener('keypress', (e) => { if (e.key === 'Enter') handleAction(); });
 </script>
 </body>
 </html>

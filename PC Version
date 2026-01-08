@@ -18,25 +18,24 @@
             --grey-btn: #cccccc;
         }
         body {
-            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Noto Sans", sans-serif;
             display: flex; align-items: center; justify-content: center;
             height: 100vh; margin: 0; background-color: var(--bg); color: var(--text);
             transition: background 0.3s; overflow: hidden;
         }
         .container {
-            text-align: center; background: var(--card); padding: 2rem;
+            text-align: center; background: var(--card); padding: 1.5rem;
             border-radius: 16px; box-shadow: 0 10px 30px rgba(0,0,0,0.3);
             width: 95%; max-width: 600px; position: relative;
-            overflow: hidden;
+            max-height: 95vh; overflow-y: auto;
         }
         .hidden { display: none !important; }
         #theme-toggle { position: absolute; top: 15px; right: 15px; cursor: pointer; font-size: 1.5rem; user-select: none; z-index: 20; }
         
-        /* VIEW TRANSITIONS */
         .view-section { animation: slideFadeIn 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94) both; }
         @keyframes slideFadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
 
-        /* MODAL STYLES */
+        /* MODALS */
         #modal-overlay, #profile-overlay {
             position: fixed; top: 0; left: 0; width: 100%; height: 100%;
             background: var(--overlay); display: flex; align-items: center;
@@ -52,7 +51,6 @@
         }
         #modal-overlay.active .modal, #profile-overlay.active .modal { transform: scale(1); }
 
-        /* PROFILE STYLES */
         .profile-pic { 
             width: 90px; height: 90px; border-radius: 50%; 
             background: var(--secondary); margin: 0 auto 15px; 
@@ -65,7 +63,6 @@
             object-fit: cover;
             display: block;
         }
-
         .profile-links { display: flex; flex-direction: column; gap: 10px; margin-top: 20px; }
         .profile-link { 
             background: var(--input-bg); color: var(--text); padding: 12px; 
@@ -76,90 +73,97 @@
         .profile-link svg { width: 20px; height: 20px; fill: currentColor; }
         .profile-link:hover { background: var(--secondary); border-color: var(--primary); transform: translateY(-2px); }
 
-        h1 { margin-bottom: 0; }
+        h1 { margin-bottom: 0; font-size: 1.8rem; }
         .credit { font-size: 0.75rem; color: #777; margin-top: 4px; margin-bottom: 20px; font-weight: normal; letter-spacing: 0.5px; }
         .credit span { cursor: pointer; transition: color 0.2s; text-decoration: none; }
         .credit span:hover { color: var(--primary); text-decoration: underline; }
         
-        /* TABLE STYLES */
-        .table-wrapper { max-height: 380px; overflow-y: auto; border-radius: 10px; background: rgba(0,0,0,0.2); border: 1px solid #333; margin-top: 10px; }
-        .score-table { width: 100%; border-collapse: collapse; font-size: 0.9rem; }
-        .score-table th { position: sticky; top: 0; background: #333; padding: 12px 8px; color: #aaa; text-transform: uppercase; font-size: 0.7rem; letter-spacing: 1px; z-index: 10; }
-        .score-table td { padding: 10px 8px; border-bottom: 1px solid rgba(255,255,255,0.05); }
-        .score-table tr:nth-child(even) { background: rgba(255,255,255,0.02); }
-        .col-len { font-weight: bold; color: #ffffff !important; background: rgba(0,0,0,0.3); width: 80px; }
-        .val-1s { color: #ff5252; font-weight: bold; }
-        .val-5s { color: #ffab40; font-weight: bold; }
-        .val-10s { color: #448aff; font-weight: bold; }
-        .val-20s { color: #69f0ae; font-weight: bold; }
-        .empty-score { opacity: 0.2; font-weight: normal; }
+        .key-container { background: rgba(0,0,0,0.2); border-radius: 8px; margin-top: 10px; padding: 10px; border: 1px solid #444; }
+        .key-grid { display: grid; grid-template-columns: repeat(5, 1fr); gap: 8px; }
+        .key-item { display: flex; flex-direction: column; font-size: 0.8rem; border-right: 1px solid #333; }
+        .key-item:last-child { border-right: none; }
+        .key-sym { font-size: 1.3rem; color: var(--accent); font-weight: bold; }
+        .key-val { color: #888; }
+        .toggle-link { color: var(--primary); cursor: pointer; font-size: 0.85rem; text-decoration: underline; display: block; margin-top: 5px; }
 
-        #arabic-display { font-size: 4rem; margin-bottom: 0.5rem; min-height: 1.2em; word-wrap: break-word; font-weight: 500; }
+        .table-wrapper { max-height: 300px; overflow-y: auto; border-radius: 10px; background: rgba(0,0,0,0.2); border: 1px solid #333; margin-top: 10px; }
+        .score-table { width: 100%; border-collapse: collapse; font-size: 0.85rem; }
+        .score-table th { position: sticky; top: 0; background: #333; padding: 10px 5px; color: #aaa; text-transform: uppercase; font-size: 0.65rem; z-index: 10; }
+        .score-table td { padding: 8px 5px; border-bottom: 1px solid rgba(255,255,255,0.05); }
+        .col-len { font-weight: bold; background: rgba(0,0,0,0.3); width: 60px; }
+        .score-table tr:hover { background: rgba(255, 255, 255, 0.05); }
+
+        #question-display { font-size: 4rem; margin: 0.5rem 0; min-height: 1.2em; font-weight: 500; }
+        #answer-display { font-size: 2rem; color: var(--accent); margin-bottom: 1rem; min-height: 1.2em; font-weight: bold; }
         
-        /* TIME BUTTON SYSTEM */
-        .time-row { display: flex; gap: 5px; margin: 10px 0 20px 0; justify-content: center; }
-        .time-btn { 
-            flex: 1; padding: 10px; font-size: 0.9rem; 
-            background: var(--grey-btn); color: white; 
-            border-radius: 6px; border: none; cursor: pointer; 
-            font-weight: bold; transition: background 0.2s, filter 0.2s;
-        }
-        .time-btn:hover { filter: brightness(1.2); }
-        .time-btn.active { background: var(--primary); color: white; cursor: default; filter: none; }
+        .time-row { display: flex; gap: 5px; margin: 10px 0 20px 0; }
+        .time-btn { flex: 1; padding: 10px; font-size: 0.9rem; background: var(--grey-btn); color: white; border-radius: 6px; border: none; cursor: pointer; font-weight: bold; }
+        .time-btn.active { background: var(--primary); }
         
-        .controls { background: var(--input-bg); padding: 15px; border-radius: 10px; margin-bottom: 1.5rem; }
-        .digit-grid { display: grid; grid-template-columns: repeat(5, 1fr); gap: 10px; margin-top: 15px; }
-        .digit-item { display: flex; flex-direction: column; align-items: center; background: var(--secondary); padding: 10px; border-radius: 8px; cursor: pointer; transition: 0.2s; }
-        .digit-item:hover { background: #444; }
-        .digit-item input { cursor: pointer; margin-top: 5px; transform: scale(1.2); }
-        input[type=range] { width: 100%; height: 25px; cursor: pointer; }
+        .controls { background: var(--input-bg); padding: 12px; border-radius: 10px; margin-bottom: 1rem; }
+        .digit-grid { display: grid; grid-template-columns: repeat(5, 1fr); gap: 8px; margin-top: 10px; }
+        .digit-item { display: flex; flex-direction: column; align-items: center; background: var(--secondary); padding: 8px; border-radius: 8px; cursor: pointer; }
+        .digit-item input { margin-top: 4px; transform: scale(1.1); }
+        
+        .setting-group { margin-bottom: 12px; text-align: left; }
+        .setting-label { font-weight: bold; display: block; margin-bottom: 4px; font-size: 0.8rem; color: #bbb; }
+        select { width: 100%; padding: 10px; background: var(--secondary); color: var(--text); border: 1px solid #444; border-radius: 8px; font-size: 0.95rem; }
+
+        input[type=range] { width: 100%; cursor: pointer; }
         input[type=text] { background: var(--input-bg); border: 2px solid #444; color: var(--text); padding: 12px; border-radius: 8px; font-size: 1.5rem; text-align: center; width: 80%; margin-bottom: 1rem; outline: none; transition: border-color 0.2s; }
+        
         .shake { animation: shake 0.3s cubic-bezier(.36,.07,.19,.97) both; border-color: var(--danger) !important; }
         @keyframes shake { 10%, 90% { transform: translate3d(-1px, 0, 0); } 20%, 80% { transform: translate3d(2px, 0, 0); } 30%, 50%, 70% { transform: translate3d(-4px, 0, 0); } 40%, 60% { transform: translate3d(4px, 0, 0); } }
-        #timer-bar-container { width: 100%; height: 10px; background: #333; margin-bottom: 1.5rem; border-radius: 5px; overflow: hidden; }
+        
+        #timer-bar-container { width: 100%; height: 8px; background: #333; margin-bottom: 1rem; border-radius: 4px; overflow: hidden; }
         #timer-bar { width: 100%; height: 100%; background: var(--success); transition: width 0.1s linear, background-color 0.3s ease; }
-        .btn-group { display: flex; gap: 10px; justify-content: center; flex-wrap: wrap; }
-        button { padding: 12px 24px; font-size: 1rem; font-weight: 600; cursor: pointer; border: none; border-radius: 8px; transition: 0.2s; }
-        .primary-btn { background-color: var(--primary); color: white; flex-grow: 1; }
-        .primary-btn:disabled { background-color: #333 !important; color: #666 !important; cursor: not-allowed; }
-        .secondary-btn { background-color: var(--secondary); color: var(--text); }
+        
+        .btn-group { display: flex; gap: 10px; justify-content: center; }
+        button { padding: 12px 20px; font-size: 1rem; font-weight: 600; cursor: pointer; border: none; border-radius: 8px; transition: 0.2s; }
+        .primary-btn { background-color: var(--primary); color: white; flex: 2; }
+        .primary-btn:disabled { background-color: #333 !important; color: #666; }
+        .secondary-btn { background-color: var(--secondary); color: var(--text); flex: 1; }
         .danger-btn { background-color: var(--danger); color: white; }
-        .menu-btn { background-color: var(--primary); color: white; width: 100%; margin-bottom: 10px; font-size: 1.1rem; padding: 15px; }
-        .menu-btn:disabled { background-color: #444; color: #777; cursor: not-allowed; }
-        .settings-btn { background-color: var(--grey-btn); color: white; width: 100%; margin-top: 10px; font-size: 1.1rem; padding: 15px; border-radius: 8px; }
-        .settings-btn:hover { filter: brightness(1.2); }
-        #feedback { font-weight: bold; margin-bottom: 0.5rem; height: 1.2em; font-size: 1.2rem; }
-        #quiz-stats-display { font-size: 0.9rem; color: #888; margin-bottom: 1rem; }
-        .correct { color: var(--success); }
-        .incorrect { color: var(--danger); }
-        .highlight-menu { border: 2px solid var(--primary) !important; box-shadow: 0 0 15px var(--primary); }
+        .menu-btn { background-color: var(--primary); color: white; width: 100%; margin-bottom: 8px; padding: 14px; }
+        #feedback { font-weight: bold; margin-bottom: 0.5rem; height: 1.2em; font-size: 1.1rem; }
+        .correct { color: var(--success); } .incorrect { color: var(--danger); }
+/* Hover effect for main action and menu buttons */
+.primary-btn:hover, 
+.secondary-btn:hover, 
+.danger-btn:hover, 
+.menu-btn:hover,
+.time-btn:hover {
+    filter: brightness(1.2); /* Makes the button slightly lighter */
+    transform: translateY(-2px); /* Lifts the button slightly */
+    box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+    outline: 2px solid var(--text); /* Adds a highlight ring */
+}
+
+/* Optional: Add a slight "click" effect */
+.primary-btn:active, 
+.secondary-btn:active, 
+.danger-btn:active, 
+.menu-btn:active {
+    transform: translateY(0);
+    filter: brightness(0.9);
+}
     </style>
 </head>
 <body>
 
 <div id="theme-toggle" onclick="toggleTheme()">🌙</div>
 
-<div id="modal-overlay">
-    <div class="modal">
-        <h3 id="modal-title">Confirmation</h3>
-        <p id="modal-text">Are you sure you want to proceed?</p>
-        <div style="display:flex; gap:10px;">
-            <button class="secondary-btn" style="flex:1" onclick="closeModal()">Back</button>
-            <button id="modal-confirm-btn" class="danger-btn" style="flex:1">Confirm</button>
-        </div>
-    </div>
-</div>
+<div id="modal-overlay"><div class="modal"><h3 id="modal-title"></h3><p id="modal-text"></p><div style="display:flex; gap:10px;"><button class="secondary-btn" style="flex:1" onclick="closeModal()">Back</button><button id="modal-confirm-btn" class="danger-btn" style="flex:1">Confirm</button></div></div></div>
 
 <div id="profile-overlay" onclick="closeProfile(event)">
     <div class="modal" onclick="event.stopPropagation()">
         <div class="profile-pic" id="profile-img-container">
             <img src="https://github.com/Sawyinator.png" alt="Sawyinator" onerror="this.parentElement.style.display='none';">
         </div>
-        
         <h2 style="margin-bottom:5px;">Sawyinator</h2>
         <p style="margin-top:0; font-size:0.9rem; color:#888;">silly guy</p>
         <p style="font-size:0.9rem; margin-bottom:20px; line-height: 1.4;">
-            I built A-INT to practice arabic-indic numbers and though it would be a useful thing to make public. hope you enjoy foo.
+            I built A-INT to practice arabic-indic numbers and thought it would be a useful thing to make public. I ended up deciding that this could help many more people than just me so i gave support for a load of number types. Hope you enjoy foo.
         </p>
         
         <div class="profile-links">
@@ -176,7 +180,6 @@
                 My YouTube
             </a>
         </div>
-        
         <button class="secondary-btn" style="width:100%; margin-top:20px;" onclick="closeProfile()">Close</button>
     </div>
 </div>
@@ -197,8 +200,8 @@
             <button class="time-btn active" data-time="10" onclick="setTimeLimit(10)">10</button>
             <button class="time-btn" data-time="20" onclick="setTimeLimit(20)">20</button>
         </div>
-        <button class="menu-btn" onclick="showLeaderboard()">View Best Scores</button>
-        <button class="settings-btn" onclick="showSettings()">Settings</button>
+        <button class="menu-btn" onclick="showLeaderboard()">Best Scores</button>
+        <button class="secondary-btn" style="width:100%" onclick="showSettings()">Settings</button>
     </div>
 
     <div id="leaderboard-view" class="view-section hidden">
@@ -217,21 +220,33 @@
                 <tbody id="score-body"></tbody>
             </table>
         </div>
-        <div style="display:flex; gap:10px; margin-top:20px;">
-            <button class="secondary-btn" style="flex:1" onclick="confirmWipe()">Reset</button>
-            <button class="menu-btn" style="flex:2; margin-bottom:0;" onclick="showMenu()">Back to Menu</button>
+        <div style="display:flex; gap:10px; margin-top:15px;">
+            <button class="secondary-btn" onclick="confirmWipe()">Reset</button>
+            <button class="menu-btn" style="margin-bottom:0;" onclick="showMenu()">Back</button>
         </div>
     </div>
 
     <div id="settings-view" class="view-section hidden">
-        <h2>Included Digits</h2>
+        <h2>Settings</h2>
         <div class="controls">
+            <div class="setting-group">
+                <label class="setting-label">Learning Numerals (Question)</label>
+                <select id="learning-select" onchange="updateLearningPreview(this.value)"></select>
+            </div>
+            <div class="setting-group">
+                <label class="setting-label">Basis Numerals (Answer)</label>
+                <select id="basis-select" onchange="tempBasis = this.value; renderScriptKey();"></select>
+            </div>
+            <span class="toggle-link" onclick="toggleScriptKey()">Show/Hide Script Key</span>
+            <div id="script-key-area" class="key-container hidden">
+                <div class="key-grid" id="key-grid-content"></div>
+            </div>
+        </div>
+        <div class="controls">
+            <label class="setting-label">Included Digits</label>
             <div class="digit-grid" id="settings-digit-grid"></div>
         </div>
-        <div style="display:flex; gap:10px;">
-            <button class="secondary-btn" style="flex:1" onclick="cancelSettings()">Cancel</button>
-            <button id="save-settings-btn" class="menu-btn" style="flex:2; margin-bottom:0;" onclick="saveSettings()">Save & Back</button>
-        </div>
+        <div style="display:flex; gap:10px;"><button class="secondary-btn" onclick="cancelSettings()">Cancel</button><button id="save-settings-btn" class="primary-btn" onclick="saveSettings()">Save</button></div>
     </div>
 
     <div id="app-view" class="view-section hidden">
@@ -240,15 +255,15 @@
             <input type="range" id="app-slider" min="1" max="16" value="4" oninput="syncLabels(this.value)" onchange="syncSliders(this.value)">
         </div>
         <div id="timer-bar-container" class="hidden"><div id="timer-bar"></div></div>
-        <div id="arabic-display"></div>
+        <div id="question-display"></div>
         <div id="quiz-ui" class="hidden">
             <div id="feedback"></div>
-            <div id="quiz-stats-display">Current Streak: 0</div>
-            <input type="text" id="quiz-input" placeholder="Enter numbers..." autocomplete="off">
+            <div id="quiz-stats-display">Streak: 0</div>
+            <input type="text" id="quiz-input" placeholder="Type answer..." autocomplete="off">
         </div>
-        <div id="western-display" class="hidden"></div>
+        <div id="answer-display" class="hidden"></div>
         <div class="btn-group">
-            <button id="menu-btn-app" class="secondary-btn" onclick="showMenu()">Menu</button>
+            <button class="secondary-btn" onclick="showMenu()">Menu</button>
             <button id="back-btn" class="secondary-btn" onclick="goBack()">Back</button>
             <button id="main-action-btn" class="primary-btn" onclick="handleAction()">Action</button>
         </div>
@@ -256,120 +271,170 @@
 </div>
 
 <script>
-    const arabicDigits = ['٠', '١', '٢', '٣', '٤', '٥', '٦', '٧', '٨', '٩'];
+    const digitScripts = {
+        'western-arabic': { name: 'Western Arabic', digits: ['0','1','2','3','4','5','6','7','8','9'] },
+        'arabic-indic':   { name: 'Arabic-Indic', digits: ['٠','١','٢','٣','٤','٥','٦','٧','٨','٩'] },
+        'devanagari':      { name: 'Devanagari', digits: ['०','१','२','३','४','५','६','७','८','९'] },
+        'bangla':          { name: 'Bangla', digits: ['০','১','২','৩','৪','৫','৬','৭','৮','৯'] },
+        'burmese':         { name: 'Burmese', digits: ['၀','၁','၂','၃','၄','၅','၆','၇','၈','၉'] },
+        'gujarati':        { name: 'Gujarati', digits: ['૦','૧','૨','૩','૪','٥','૬','૭','೮','૯'] },
+        'gurmukhi':        { name: 'Gurmukhi', digits: ['੦','੧','੨','੩','४','੫','੬','੭','੮','੯'] },
+        'kannada':         { name: 'Kannada', digits: ['೦','೧','೨','೩','೪','೫','೬','೭','೮','೯'] },
+        'khmer':           { name: 'Khmer', digits: ['០','១','២','៣','៤','៥','៦','៧','៨','៩'] },
+        'malayalam':       { name: 'Malayalam', digits: ['൦','൧','൨','൩','൪','൫','൬','൭','൮','൯'] },
+        'meitei':          { name: 'Meitei', digits: ['꯰','꯱','꯲','꯳','꯴','꯵','꯶','꯷','꯸','꯹'] },
+        'odia':            { name: 'Odia', digits: ['୦','୧','୨','୩','୪','୫','୬','୭','୮','୯'] },
+        'ol-chiki':        { name: 'Ol Chiki', digits: ['᱐','᱑','᱒','٣','٤','٥','٦','᱗','８','９'] },
+        'telugu':          { name: 'Telugu', digits: ['౦','౧','౨','౩','౪','౫','౬','౭','౮','౯'] }
+    };
+
+    let learningScript = 'arabic-indic', basisScript = 'western-arabic';
+    let tempLearning = 'arabic-indic', tempBasis = 'western-arabic', tempDigits = [];
+    let initialSettingsState = ""; // Tracks changes in settings
     let history = [], currentMode = '', isRevealed = false, streak = 0, currentLen = 4, selectedTime = 10;
-    let timerInterval, timeLeft = 10;
-    let allowedDigits = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9];
-    let tempDigits = [];
+    let timerInterval, timeLeft = 10, allowedDigits = [0,1,2,3,4,5,6,7,8,9];
 
     const quizInput = document.getElementById('quiz-input');
     const timerBar = document.getElementById('timer-bar');
 
     function openProfile() { document.getElementById('profile-overlay').classList.add('active'); }
-    function closeProfile(e) { document.getElementById('profile-overlay').classList.remove('active'); }
+    function closeProfile() { document.getElementById('profile-overlay').classList.remove('active'); }
 
-    function openModal(title, text, confirmCallback) {
-        document.getElementById('modal-title').innerText = title;
-        document.getElementById('modal-text').innerText = text;
-        const confirmBtn = document.getElementById('modal-confirm-btn');
-        confirmBtn.onclick = () => { confirmCallback(); closeModal(); };
-        document.getElementById('modal-overlay').classList.add('active');
+    function openModal(t, txt, cb) { 
+        document.getElementById('modal-title').innerText = t; 
+        document.getElementById('modal-text').innerText = txt;
+        document.getElementById('modal-confirm-btn').onclick = () => { cb(); closeModal(); };
+        document.getElementById('modal-overlay').classList.add('active'); 
     }
     function closeModal() { document.getElementById('modal-overlay').classList.remove('active'); }
 
-    function switchView(targetId) {
-        document.querySelectorAll('.view-section').forEach(view => {
-            view.classList.add('hidden');
+    function switchView(id) { document.querySelectorAll('.view-section').forEach(v => v.classList.add('hidden')); document.getElementById(id).classList.remove('hidden'); }
+
+    function initDropdowns() {
+        const lSelect = document.getElementById('learning-select'), bSelect = document.getElementById('basis-select');
+        lSelect.innerHTML = ''; bSelect.innerHTML = '';
+        Object.keys(digitScripts).forEach(k => {
+            const opt = `<option value="${k}">${digitScripts[k].name}</option>`;
+            lSelect.innerHTML += opt; bSelect.innerHTML += opt;
         });
-        document.getElementById(targetId).classList.remove('hidden');
     }
 
-    function loadSettings() {
-        const saved = localStorage.getItem('allowed_digits');
-        if (saved) {
-            allowedDigits = JSON.parse(saved);
-        }
+    function setTimeLimit(s) {
+        selectedTime = s;
+        document.querySelectorAll('.time-btn').forEach(btn => btn.classList.toggle('active', parseInt(btn.dataset.time) === s));
+        document.getElementById('quiz-start-btn').innerText = `Quiz Mode (${s}s)`;
     }
 
-    function setTimeLimit(seconds) {
-        selectedTime = seconds;
-        document.querySelectorAll('.time-btn').forEach(btn => {
-            btn.classList.remove('active');
-            if (parseInt(btn.getAttribute('data-time')) === seconds) {
-                btn.classList.add('active');
-            }
-        });
-        document.getElementById('quiz-start-btn').innerText = `Quiz Mode (${seconds}s)`;
-    }
-
-    function showMenu() {
-        clearInterval(timerInterval);
-        switchView('main-menu');
-        document.getElementById('main-action-btn').disabled = false;
-        document.getElementById('menu-btn-app').classList.remove('highlight-menu');
-        currentMode = '';
-    }
+    function showMenu() { clearInterval(timerInterval); switchView('main-menu'); document.getElementById('main-action-btn').disabled = false; currentMode = ''; }
 
     function showLeaderboard() {
         switchView('leaderboard-view');
-        const tbody = document.getElementById('score-body');
+        const tbody = document.getElementById('score-body'); 
         tbody.innerHTML = '';
-        const times = [1, 5, 10, 20];
+        const timeColors = { 1: '#ff5252', 5: '#ffab40', 10: '#448aff', 20: '#69f0ae' };
         for(let i=1; i<=16; i++) {
             let row = `<tr><td class="col-len">${i}</td>`;
-            times.forEach(t => {
-                const score = localStorage.getItem(`best_len${i}_time${t}`) || 0;
-                const displayVal = score == 0 ? "-" : score;
-                const cssClass = score == 0 ? "empty-score" : `val-${t}s`;
-                row += `<td class="${cssClass}">${displayVal}</td>`;
+            [1, 5, 10, 20].forEach(t => {
+                const s = localStorage.getItem(`best_len${i}_time${t}`) || 0;
+                const displayColor = s > 0 ? timeColors[t] : '#444';
+                row += `<td style="color:${displayColor}; font-weight:${s > 0 ? 'bold' : 'normal'}">${s == 0 ? '-' : s}</td>`;
             });
-            row += `</tr>`;
-            tbody.innerHTML += row;
+            tbody.innerHTML += row + '</tr>';
         }
     }
 
-    function showSettings() { tempDigits = [...allowedDigits]; renderSettingsGrid(); switchView('settings-view'); }
+    function showSettings() { 
+        tempDigits = [...allowedDigits]; tempLearning = learningScript; tempBasis = basisScript;
+        
+        // Capture initial state for change detection
+        initialSettingsState = JSON.stringify({tempDigits, tempLearning, tempBasis});
+
+        document.getElementById('learning-select').value = tempLearning;
+        document.getElementById('basis-select').value = tempBasis;
+        renderSettingsGrid(); renderScriptKey(); switchView('settings-view'); 
+    }
+
+    function cancelSettings() {
+        const currentState = JSON.stringify({tempDigits, tempLearning, tempBasis});
+        if (currentState === initialSettingsState) {
+            showMenu();
+        } else {
+            openModal(
+                "Unsaved Changes", 
+                "You have modified your settings. Are you sure you want to discard these changes?", 
+                () => { showMenu(); }
+            );
+        }
+    }
+
+    function updateLearningPreview(v) { tempLearning = v; renderSettingsGrid(); renderScriptKey(); }
+    function toggleScriptKey() { document.getElementById('script-key-area').classList.toggle('hidden'); }
+
+    function renderScriptKey() {
+        const grid = document.getElementById('key-grid-content'); grid.innerHTML = '';
+        const lSyms = digitScripts[tempLearning].digits;
+        const bSyms = digitScripts[tempBasis].digits;
+        for(let i=0; i<=9; i++) {
+            grid.innerHTML += `<div class="key-item"><span class="key-sym">${lSyms[i]}</span><span class="key-val">${bSyms[i]}</span></div>`;
+        }
+    }
 
     function renderSettingsGrid() {
-        const grid = document.getElementById('settings-digit-grid');
-        grid.innerHTML = '';
+        const grid = document.getElementById('settings-digit-grid'); grid.innerHTML = '';
+        const syms = digitScripts[tempLearning].digits;
         for (let i = 0; i <= 9; i++) {
-            const isChecked = tempDigits.includes(i);
+            const checked = tempDigits.includes(i);
             const item = document.createElement('div');
             item.className = 'digit-item';
-            item.innerHTML = `<span style="font-size:1.2rem">${arabicDigits[i]}</span><input type="checkbox" ${isChecked ? 'checked' : ''} onchange="toggleDigit(${i}, this)">`;
-            item.onclick = (e) => { if(e.target.tagName !== 'INPUT') { const cb = item.querySelector('input'); cb.checked = !cb.checked; toggleDigit(i, cb); } };
+            item.innerHTML = `<span style="font-size:1.2rem">${syms[i]}</span><input type="checkbox" ${checked?'checked':''}>`;
+            item.onclick = () => { const cb = item.querySelector('input'); cb.checked = !cb.checked; toggleDigit(i, cb); };
             grid.appendChild(item);
         }
         validateSettings();
     }
 
-    function toggleDigit(digit, checkbox) {
-        if (!checkbox.checked && tempDigits.length <= 2 && tempDigits.includes(digit)) { checkbox.checked = true; return; }
-        if (checkbox.checked) { if (!tempDigits.includes(digit)) tempDigits.push(digit); } else { tempDigits = tempDigits.filter(d => d !== digit); }
-        tempDigits.sort((a, b) => a - b);
+    function toggleDigit(d, cb) {
+        if (!cb.checked && tempDigits.length <= 2 && tempDigits.includes(d)) { cb.checked = true; return; }
+        if (cb.checked) { if (!tempDigits.includes(d)) tempDigits.push(d); } else { tempDigits = tempDigits.filter(x => x !== d); }
         validateSettings();
     }
 
     function validateSettings() { document.getElementById('save-settings-btn').disabled = tempDigits.length < 2; }
-    function saveSettings() { allowedDigits = [...tempDigits]; localStorage.setItem('allowed_digits', JSON.stringify(allowedDigits)); showMenu(); }
-    function cancelSettings() { if (JSON.stringify(allowedDigits) !== JSON.stringify(tempDigits)) { openModal("Discard Changes?", "You have unsaved changes in your digit selection.", showMenu); } else { showMenu(); } }
-    function confirmWipe() { openModal("Reset Scores?", "This will permanently delete all your personal bests.", () => { localStorage.clear(); loadSettings(); showLeaderboard(); }); }
-    function triggerShake() { quizInput.classList.remove('shake'); void quizInput.offsetWidth; quizInput.classList.add('shake'); }
+    function saveSettings() { allowedDigits = [...tempDigits]; learningScript = tempLearning; basisScript = tempBasis; localStorage.setItem('allowed_digits', JSON.stringify(allowedDigits)); localStorage.setItem('learning_script', learningScript); localStorage.setItem('basis_script', basisScript); showMenu(); }
+    function confirmWipe() { openModal("Reset?", "Wipe scores?", () => { localStorage.clear(); loadSettings(); showLeaderboard(); }); }
 
-    function startMode(mode) {
-        currentMode = mode; history = []; streak = 0;
-        switchView('app-view');
-        document.getElementById('main-action-btn').disabled = false;
-        document.getElementById('menu-btn-app').classList.remove('highlight-menu');
-        const isQuiz = mode === 'quiz';
-        document.getElementById('practice-controls').classList.toggle('hidden', isQuiz);
-        document.getElementById('quiz-ui').classList.toggle('hidden', !isQuiz);
-        document.getElementById('timer-bar-container').classList.toggle('hidden', !isQuiz);
-        document.getElementById('western-display').classList.toggle('hidden', isQuiz);
-        document.getElementById('back-btn').classList.toggle('hidden', isQuiz);
-        if(isQuiz) document.getElementById('quiz-stats-display').innerText = `Current Streak: 0`;
+    function triggerShake() {
+        quizInput.classList.remove('shake');
+        void quizInput.offsetWidth; 
+        quizInput.classList.add('shake');
+        setTimeout(() => quizInput.classList.remove('shake'), 350);
+    }
+
+    function startMode(m) {
+        currentMode = m; history = []; streak = 0; switchView('app-view');
+        const isQ = m === 'quiz';
+        document.getElementById('practice-controls').classList.toggle('hidden', isQ);
+        document.getElementById('quiz-ui').classList.toggle('hidden', !isQ);
+        document.getElementById('timer-bar-container').classList.toggle('hidden', !isQ);
+        document.getElementById('answer-display').classList.toggle('hidden', isQ);
+        document.getElementById('back-btn').classList.toggle('hidden', isQ);
+        quizInput.maxLength = currentLen; 
+        document.getElementById('quiz-stats-display').innerText = `Streak: 0`;
         generate();
+    }
+
+    function generate() {
+        clearInterval(timerInterval);
+        let num = ""; let last = -1;
+        const firstPool = allowedDigits.filter(d => !(d === 0 && currentLen > 1));
+        for(let i=0; i<currentLen; i++) {
+            const p = (i === 0) ? firstPool : allowedDigits;
+            let sub = p.filter(d => d !== last);
+            const digit = sub[Math.floor(Math.random() * sub.length)];
+            num += digit; last = digit;
+        }
+        history.push(num); display(num);
+        if(currentMode === 'quiz') startTimer();
     }
 
     function startTimer() {
@@ -377,112 +442,92 @@
         timeLeft = selectedTime;
         timerBar.style.width = '100%';
         timerBar.style.backgroundColor = 'var(--success)';
+        timerBar.style.opacity = '1';
+
         timerInterval = setInterval(() => {
             timeLeft -= 0.1;
             const percentage = (timeLeft / selectedTime * 100);
             timerBar.style.width = percentage + '%';
             
-            // Reinstated color logic
             if (percentage > 50) {
                 timerBar.style.backgroundColor = 'var(--success)';
+                timerBar.style.opacity = '1';
             } else if (percentage > 20) {
                 timerBar.style.backgroundColor = 'var(--warning)';
+                timerBar.style.opacity = '1';
             } else {
                 timerBar.style.backgroundColor = 'var(--danger)';
+                timerBar.style.opacity = (timerBar.style.opacity === '1' ? '0.2' : '1');
             }
 
-            if (timeLeft <= 0) { clearInterval(timerInterval); handleAction(); }
+            if (timeLeft <= 0) { 
+                clearInterval(timerInterval); 
+                timerBar.style.opacity = '1';
+                handleAction(); 
+            }
         }, 100);
     }
 
-    function generate() {
-        clearInterval(timerInterval);
-        let numStr = "";
-        let lastDigit = -1;
-        const firstDigitPool = allowedDigits.filter(d => !(d === 0 && currentLen > 1));
-        const pool = allowedDigits;
-        for(let i=0; i<currentLen; i++) {
-            const currentPool = (i === 0) ? firstDigitPool : pool;
-            let subPool = currentPool.filter(d => d !== lastDigit);
-            if (subPool.length === 0) subPool = currentPool;
-            const digit = subPool[Math.floor(Math.random() * subPool.length)];
-            numStr += digit.toString();
-            lastDigit = digit;
-        }
-        history.push(numStr);
-        if (history.length > 11) history.shift();
-        display(numStr);
-        if(currentMode === 'quiz') startTimer();
-    }
-
     function display(str) {
-        document.getElementById('arabic-display').innerText = str.split('').map(d => arabicDigits[parseInt(d)]).join('');
-        document.getElementById('western-display').innerText = str;
-        document.getElementById('western-display').style.visibility = 'hidden';
-        document.getElementById('feedback').innerText = '';
-        quizInput.value = '';
-        quizInput.disabled = false;
+        document.getElementById('question-display').innerText = str.split('').map(d => digitScripts[learningScript].digits[d]).join('');
+        document.getElementById('answer-display').innerText = str.split('').map(d => digitScripts[basisScript].digits[d]).join('');
+        document.getElementById('answer-display').style.visibility = 'hidden';
+        document.getElementById('feedback').innerText = ''; quizInput.value = ''; quizInput.disabled = false;
         document.getElementById('main-action-btn').innerText = currentMode === 'quiz' ? 'Check' : 'Reveal';
-        isRevealed = false;
-        if(currentMode === 'quiz') setTimeout(() => quizInput.focus(), 10);
+        document.getElementById('main-action-btn').disabled = false;
+        isRevealed = false; if(currentMode === 'quiz') setTimeout(() => quizInput.focus(), 50);
     }
 
     function handleAction() {
         if (document.getElementById('main-action-btn').disabled) return;
-        const currentNum = history[history.length - 1];
+        const cur = history[history.length-1];
         if (currentMode === 'generator') {
-            if (!isRevealed) {
-                document.getElementById('western-display').style.visibility = 'visible';
-                document.getElementById('main-action-btn').innerText = 'Continue';
-                isRevealed = true;
-            } else generate();
+            if (!isRevealed) { document.getElementById('answer-display').style.visibility='visible'; document.getElementById('main-action-btn').innerText='Continue'; isRevealed=true; }
+            else generate();
         } else {
             if (!isRevealed) {
-                const inputVal = quizInput.value.trim();
-                if (inputVal.length < currentLen && timeLeft > 0) { triggerShake(); return; }
-                clearInterval(timerInterval);
-                isRevealed = true;
-                quizInput.disabled = true;
-                if (inputVal === currentNum) {
-                    document.getElementById('feedback').innerText = "Correct!"; 
-                    document.getElementById('feedback').className = "correct";
-                    streak++;
-                    document.getElementById('quiz-stats-display').innerText = `Current Streak: ${streak}`;
-                    const key = `best_len${currentLen}_time${selectedTime}`;
-                    if (streak > (localStorage.getItem(key) || 0)) localStorage.setItem(key, streak);
+                const val = quizInput.value.trim();
+                if (val.length < currentLen && timeLeft > 0) { triggerShake(); return; }
+                clearInterval(timerInterval); 
+                timerBar.style.opacity = '1';
+                isRevealed = true; quizInput.disabled = true;
+                if (val === cur) {
+                    document.getElementById('feedback').innerText = "Correct!"; document.getElementById('feedback').className = "correct";
+                    streak++; document.getElementById('quiz-stats-display').innerText = `Streak: ${streak}`;
+                    const k = `best_len${currentLen}_time${selectedTime}`;
+                    if (streak > (localStorage.getItem(k)||0)) localStorage.setItem(k, streak);
                     document.getElementById('main-action-btn').innerText = 'Continue';
                 } else {
-                    document.getElementById('feedback').innerText = timeLeft <= 0 ? `Time's Up! (${currentNum})` : `Wrong! (${currentNum})`;
-                    document.getElementById('feedback').className = "incorrect";
-                    streak = 0;
-                    document.getElementById('main-action-btn').innerText = 'Game Over';
-                    document.getElementById('main-action-btn').disabled = true;
-                    document.getElementById('menu-btn-app').classList.add('highlight-menu');
+                    document.getElementById('feedback').innerText = `Wrong! (${document.getElementById('answer-display').innerText})`;
+                    document.getElementById('feedback').className = "incorrect"; streak = 0;
+                    document.getElementById('main-action-btn').innerText = 'Game Over'; document.getElementById('main-action-btn').disabled = true;
                 }
             } else generate();
         }
     }
 
-    function toggleTheme() {
-        document.body.classList.toggle('light-mode');
-        document.getElementById('theme-toggle').innerText = document.body.classList.contains('light-mode') ? '☀️' : '🌙';
-    }
+    function syncLabels(v) { document.getElementById('menu-length-label').innerText = `Digit Length: ${v}`; document.getElementById('app-length-label').innerText = `Digit Length: ${v}`; }
+    function syncSliders(v) { currentLen = parseInt(v); document.getElementById('menu-slider').value = v; document.getElementById('app-slider').value = v; quizInput.maxLength = currentLen; if(currentMode === 'generator') generate(); }
+    function toggleTheme() { document.body.classList.toggle('light-mode'); document.getElementById('theme-toggle').innerText = document.body.classList.contains('light-mode')?'☀️':'🌙'; }
+    function goBack() { if (history.length > 1) { history.pop(); display(history[history.length-1]); } }
+    
+    quizInput.addEventListener('keydown', (e) => {
+        const isChar = e.key.length === 1;
+        const isModifier = e.ctrlKey || e.metaKey || e.altKey;
+        if (quizInput.value.length >= quizInput.maxLength && isChar && !isModifier) {
+            e.preventDefault();
+            triggerShake();
+        }
+    });
 
-    function syncLabels(val) {
-        document.getElementById('menu-length-label').innerText = `Digit Length: ${val}`;
-        document.getElementById('app-length-label').innerText = `Digit Length: ${val}`;
-    }
-
-    function syncSliders(val) {
-        currentLen = parseInt(val);
-        document.getElementById('menu-slider').value = val;
-        document.getElementById('app-slider').value = val;
-        if(currentMode === 'generator') generate();
-    }
-
-    function goBack() { if (history.length > 1 && currentMode === 'generator') { history.pop(); display(history[history.length-1]); } }
     document.addEventListener('keypress', (e) => { if (e.key === 'Enter') handleAction(); });
     
+    function loadSettings() {
+        initDropdowns();
+        const d = localStorage.getItem('allowed_digits'), l = localStorage.getItem('learning_script'), b = localStorage.getItem('basis_script');
+        if (d) allowedDigits = JSON.parse(d);
+        if (l) learningScript = l; if (b) basisScript = b;
+    }
     loadSettings();
 </script>
 </body>

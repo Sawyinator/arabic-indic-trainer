@@ -1,6 +1,17 @@
-For IOS Users, the method i have found most consistent for being able to use this code well is to use the shortcuts app, I'll give a quick little walkthrough here.
-1. Open the 'Shortcuts' app and create a new shortcut.
-2. In this shortcut, add a text block.
-3. Paste the html code into this text block.
-5. Then add an 'Open URL s'.
-6. In this Open URL s clear the text variable, and type "data:text/html," and then choose the text variable just above the keyboard.
+A-INT (Arabic-Indic Number Trainer) Currently Supports all of these number formats to be chosen as your base or your learning format.
+- Western Arabic
+- Arabic-Indic
+- Devanagari
+- Bangla
+- Burmese
+- Gujarati
+- Gurmukhi
+- Kannada
+- Khmer
+- Malayalam
+- Meitei
+- Odia
+- Ol Chiki
+- Telugu
+
+- This project has been Generated using google's Gemini, which frankly, sucks. I do not currently have the coding experience i need to be able to create this, so i would happily accept any human-made code.

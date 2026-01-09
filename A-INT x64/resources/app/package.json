@@ -1,0 +1,18 @@
+{
+  "name": "a-int",
+  "version": "1.0.0",
+  "description": "Arabic-Indic Number Trainer desktop app",
+  "main": "main.js",
+  "scripts": {
+    "start": "electron .",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "commonjs",
+  "devDependencies": {
+    "electron": "^39.2.7",
+    "electron-packager": "^17.1.2"
+  }
+}

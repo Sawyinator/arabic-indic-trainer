@@ -127,26 +127,16 @@
         .menu-btn { background-color: var(--primary); color: white; width: 100%; margin-bottom: 8px; padding: 14px; }
         #feedback { font-weight: bold; margin-bottom: 0.5rem; height: 1.2em; font-size: 1.1rem; }
         .correct { color: var(--success); } .incorrect { color: var(--danger); }
-/* Hover effect for main action and menu buttons */
-.primary-btn:hover, 
-.secondary-btn:hover, 
-.danger-btn:hover, 
-.menu-btn:hover,
-.time-btn:hover {
-    filter: brightness(1.2); /* Makes the button slightly lighter */
-    transform: translateY(-2px); /* Lifts the button slightly */
-    box-shadow: 0 4px 12px rgba(0,0,0,0.2);
-    outline: 2px solid var(--text); /* Adds a highlight ring */
-}
-
-/* Optional: Add a slight "click" effect */
-.primary-btn:active, 
-.secondary-btn:active, 
-.danger-btn:active, 
-.menu-btn:active {
-    transform: translateY(0);
-    filter: brightness(0.9);
-}
+        .primary-btn:hover, .secondary-btn:hover, .danger-btn:hover, .menu-btn:hover, .time-btn:hover {
+            filter: brightness(1.2);
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+            outline: 2px solid var(--text);
+        }
+        .primary-btn:active, .secondary-btn:active, .danger-btn:active, .menu-btn:active {
+            transform: translateY(0);
+            filter: brightness(0.9);
+        }
     </style>
 </head>
 <body>
@@ -246,6 +236,21 @@
             <label class="setting-label">Included Digits</label>
             <div class="digit-grid" id="settings-digit-grid"></div>
         </div>
+        <div class="controls">
+            <label class="setting-label">Data Management</label>
+            <div style="display:flex; gap:10px; margin-top:5px;">
+                <button class="secondary-btn" style="font-size: 0.8rem; flex:1; padding: 8px;" onclick="exportData()">Export</button>
+                <button class="secondary-btn" style="font-size: 0.8rem; flex:1; padding: 8px;" onclick="triggerImport()">Import</button>
+                <input type="file" id="import-input" hidden accept=".json" onchange="importData(event)">
+            </div>
+        </div>
+
+        <div class="controls" style="border: 1px solid var(--danger); background: rgba(244, 67, 54, 0.05);">
+            <label class="setting-label" style="color: var(--danger);">Danger Zone</label>
+            <p style="font-size: 0.7rem; margin: 4px 0 8px 0; color: #888;">Entirely clear all browser data for this app.</p>
+            <button class="danger-btn" style="width: 100%; font-size: 0.85rem; padding: 10px;" onclick="wipeAllLocalStorage()">Clear All Local Storage</button>
+        </div>
+
         <div style="display:flex; gap:10px;"><button class="secondary-btn" onclick="cancelSettings()">Cancel</button><button id="save-settings-btn" class="primary-btn" onclick="saveSettings()">Save</button></div>
     </div>
 
@@ -275,9 +280,9 @@
         'western-arabic': { name: 'Western Arabic', digits: ['0','1','2','3','4','5','6','7','8','9'] },
         'arabic-indic':   { name: 'Arabic-Indic', digits: ['٠','١','٢','٣','٤','٥','٦','٧','٨','٩'] },
         'devanagari':      { name: 'Devanagari', digits: ['०','१','२','३','४','५','६','७','८','९'] },
-        'bangla':          { name: 'Bangla', digits: ['০','১','২','৩','৪','৫','৬','৭','৮','৯'] },
+        'bangla':          { name: 'Bangla', digits: ['০','১','২','৩','৪','٥','৬','੭','೮','੯'] },
         'burmese':         { name: 'Burmese', digits: ['၀','၁','၂','၃','၄','၅','၆','၇','၈','၉'] },
-        'gujarati':        { name: 'Gujarati', digits: ['૦','૧','૨','૩','૪','٥','૬','૭','೮','૯'] },
+        'gujarati':        { name: 'Gujarati', digits: ['૦','૧','૨','૩','૪','૫','૬','૭','૮','૯'] },
         'gurmukhi':        { name: 'Gurmukhi', digits: ['੦','੧','੨','੩','४','੫','੬','੭','੮','੯'] },
         'kannada':         { name: 'Kannada', digits: ['೦','೧','೨','೩','೪','೫','೬','೭','೮','೯'] },
         'khmer':           { name: 'Khmer', digits: ['០','១','២','៣','៤','៥','៦','៧','៨','៩'] },
@@ -290,7 +295,7 @@
 
     let learningScript = 'arabic-indic', basisScript = 'western-arabic';
     let tempLearning = 'arabic-indic', tempBasis = 'western-arabic', tempDigits = [];
-    let initialSettingsState = ""; // Tracks changes in settings
+    let initialSettingsState = ""; 
     let history = [], currentMode = '', isRevealed = false, streak = 0, currentLen = 4, selectedTime = 10;
     let timerInterval, timeLeft = 10, allowedDigits = [0,1,2,3,4,5,6,7,8,9];
 
@@ -345,10 +350,7 @@
 
     function showSettings() { 
         tempDigits = [...allowedDigits]; tempLearning = learningScript; tempBasis = basisScript;
-        
-        // Capture initial state for change detection
         initialSettingsState = JSON.stringify({tempDigits, tempLearning, tempBasis});
-
         document.getElementById('learning-select').value = tempLearning;
         document.getElementById('basis-select').value = tempBasis;
         renderSettingsGrid(); renderScriptKey(); switchView('settings-view'); 
@@ -356,15 +358,8 @@
 
     function cancelSettings() {
         const currentState = JSON.stringify({tempDigits, tempLearning, tempBasis});
-        if (currentState === initialSettingsState) {
-            showMenu();
-        } else {
-            openModal(
-                "Unsaved Changes", 
-                "You have modified your settings. Are you sure you want to discard these changes?", 
-                () => { showMenu(); }
-            );
-        }
+        if (currentState === initialSettingsState) { showMenu(); } 
+        else { openModal("Unsaved Changes", "Discard modifications?", () => { showMenu(); }); }
     }
 
     function updateLearningPreview(v) { tempLearning = v; renderSettingsGrid(); renderScriptKey(); }
@@ -400,8 +395,65 @@
     }
 
     function validateSettings() { document.getElementById('save-settings-btn').disabled = tempDigits.length < 2; }
-    function saveSettings() { allowedDigits = [...tempDigits]; learningScript = tempLearning; basisScript = tempBasis; localStorage.setItem('allowed_digits', JSON.stringify(allowedDigits)); localStorage.setItem('learning_script', learningScript); localStorage.setItem('basis_script', basisScript); showMenu(); }
-    function confirmWipe() { openModal("Reset?", "Wipe scores?", () => { localStorage.clear(); loadSettings(); showLeaderboard(); }); }
+    
+    function saveSettings() { 
+        allowedDigits = [...tempDigits]; 
+        learningScript = tempLearning; 
+        basisScript = tempBasis; 
+        localStorage.setItem('allowed_digits', JSON.stringify(allowedDigits)); 
+        localStorage.setItem('learning_script', learningScript); 
+        localStorage.setItem('basis_script', basisScript); 
+        showMenu(); 
+    }
+
+    function confirmWipe() { 
+        openModal("Reset Scores?", "Wipe only the leaderboard data?", () => { 
+            for(let i=1; i<=16; i++) { [1,5,10,20].forEach(t => localStorage.removeItem(`best_len${i}_time${t}`)); }
+            showLeaderboard(); 
+        }); 
+    }
+
+    // --- NEW: Wipe All Data Function ---
+    function wipeAllLocalStorage() {
+        openModal("Factory Reset?", "This will permanently delete ALL settings, high scores, and preferences. The app will reload.", () => {
+            localStorage.clear();
+            location.reload();
+        });
+    }
+
+    function exportData() {
+        const data = JSON.stringify(localStorage);
+        const blob = new Blob([data], { type: "application/json" });
+        const url = URL.createObjectURL(blob);
+        const link = document.createElement("a");
+        link.href = url;
+        const timestamp = new Date().toISOString().replace('T', '_').replace(/:/g, '-').slice(0, 19);
+        link.download = `A-INT_export_${timestamp}.json`;
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+        URL.revokeObjectURL(url);
+    }
+
+    function triggerImport() { document.getElementById('import-input').click(); }
+
+    function importData(event) {
+        const file = event.target.files[0];
+        if (!file) return;
+        const reader = new FileReader();
+        reader.onload = (e) => {
+            try {
+                const imported = JSON.parse(e.target.result);
+                openModal("Import Data?", "This will overwrite your current scores and settings. Continue?", () => {
+                    localStorage.clear();
+                    Object.keys(imported).forEach(k => localStorage.setItem(k, imported[k]));
+                    location.reload();
+                });
+            } catch (err) { alert("Invalid backup file."); }
+        };
+        reader.readAsText(file);
+        event.target.value = '';
+    }
 
     function triggerShake() {
         quizInput.classList.remove('shake');
@@ -443,28 +495,17 @@
         timerBar.style.width = '100%';
         timerBar.style.backgroundColor = 'var(--success)';
         timerBar.style.opacity = '1';
-
         timerInterval = setInterval(() => {
             timeLeft -= 0.1;
             const percentage = (timeLeft / selectedTime * 100);
             timerBar.style.width = percentage + '%';
-            
-            if (percentage > 50) {
-                timerBar.style.backgroundColor = 'var(--success)';
-                timerBar.style.opacity = '1';
-            } else if (percentage > 20) {
-                timerBar.style.backgroundColor = 'var(--warning)';
-                timerBar.style.opacity = '1';
-            } else {
+            if (percentage > 50) timerBar.style.backgroundColor = 'var(--success)';
+            else if (percentage > 20) timerBar.style.backgroundColor = 'var(--warning)';
+            else {
                 timerBar.style.backgroundColor = 'var(--danger)';
                 timerBar.style.opacity = (timerBar.style.opacity === '1' ? '0.2' : '1');
             }
-
-            if (timeLeft <= 0) { 
-                clearInterval(timerInterval); 
-                timerBar.style.opacity = '1';
-                handleAction(); 
-            }
+            if (timeLeft <= 0) { clearInterval(timerInterval); timerBar.style.opacity = '1'; handleAction(); }
         }, 100);
     }
 
@@ -511,25 +552,15 @@
     function toggleTheme() { document.body.classList.toggle('light-mode'); document.getElementById('theme-toggle').innerText = document.body.classList.contains('light-mode')?'☀️':'🌙'; }
     function goBack() { if (history.length > 1) { history.pop(); display(history[history.length-1]); } }
     
-    quizInput.addEventListener('keydown', (e) => {
-        const isChar = e.key.length === 1;
-        const isModifier = e.ctrlKey || e.metaKey || e.altKey;
-        if (quizInput.value.length >= quizInput.maxLength && isChar && !isModifier) {
-            e.preventDefault();
-            triggerShake();
-        }
-    });
-
-    document.addEventListener('keypress', (e) => { if (e.key === 'Enter') handleAction(); });
-    
     function loadSettings() {
-        initDropdowns();
-        const d = localStorage.getItem('allowed_digits'), l = localStorage.getItem('learning_script'), b = localStorage.getItem('basis_script');
-        if (d) allowedDigits = JSON.parse(d);
-        if (l) learningScript = l; if (b) basisScript = b;
+        const d = localStorage.getItem('allowed_digits'); if(d) allowedDigits = JSON.parse(d);
+        const l = localStorage.getItem('learning_script'); if(l) learningScript = l;
+        const b = localStorage.getItem('basis_script'); if(b) basisScript = b;
     }
-    loadSettings();
+
+    quizInput.addEventListener('keydown', (e) => { if(e.key === 'Enter') handleAction(); });
+    window.onload = () => { loadSettings(); initDropdowns(); };
 </script>
+
 </body>
 </html>
-
